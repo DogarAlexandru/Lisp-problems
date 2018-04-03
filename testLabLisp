@@ -1,0 +1,21 @@
+
+(defun main (l1 l2)
+  (reverse (masked (reverse l1) (reverse l2) 0)) 
+)
+
+(defun masked (l1 l2 q)
+  (cond 
+   ((and (and (null l1) (null l2) ) (equal q 1)) (list 1))
+   ((and (null l1) (null l2) ) NIL)
+   ((and (and (null l1) (not (null l2))) (>= (+ (car l2) q) 10) ) (cons 0 (masked l1 (cdr l2) 1) ))
+   ((and (and (null l2) (not (null l1))) (>= (+ (car l1) q) 10) ) (cons 0 (masked (cdr l1) l2 1) ))
+   ((and (null l1) (not (null l2) ) ) (cons (+ (car l2) q ) (cdr l2)))
+   ((and (null l2) (not (null l1) )) (cons (+ (car l1) q) (cdr l1) ))
+   ((< (+ (car l1) (car l2) q ) 10) (cons (+ (car l1) (car l2) q ) (masked (cdr l1) (cdr l2) 0 )  ))
+   ((>= (+ (car l1) (car l2) q ) 10) (cons (mod (+ (car l1) (car l2) q ) 10) (masked (cdr l1) (cdr l2) 1 )) )
+  )
+)
+
+(defun teste
+  (equal (main `(1 1 1) `(2 2 2))  (list 3 3 3) )
+)

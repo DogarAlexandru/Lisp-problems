@@ -1,0 +1,70 @@
+
+;                   { l1 , n=1
+;ex1([l1...ln] , n)={ ex1([l2...ln] , n-1) , n>1
+;
+(defun ex1(l n)
+  (cond
+   ((equal n 1) (car l))
+   (T (ex1(cdr l) (- n 1)))
+  )
+)
+(defun testEx1()
+  (and (equal (ex1 (list 1 2 3) 1) 1)
+       (equal (ex1 (list 1 2 3) 3) 3)
+       (null (ex1 (list 1 2 3) 4))
+  )
+)
+;                   {nil , n=0
+;ex2([l1...ln] , e)={true , l1=e
+;                   {true , l1 list && ex2(l1 , e) true
+;                   {ex([l2...ln] , e) , l1 not list && l1 != e
+
+(defun ex2(l e)
+  (cond
+        ((Null l) Nil)
+	((equal (car l) e) T)
+        ((and (listp (car l)) (ex2 (car l) e) T))
+        ((not (equal (car l) e)) (ex2 (cdr l) e))
+  )
+)
+(defun testEx2()
+  (and (ex2 (list 5 7 (list (list (list 1 2 3) 3 ))) 1 )
+       (ex2 (list 5 7 (list (list (list 1 2 3) 3 ))) 5 )
+       (ex2 (list 5 7 (list (list (list 1 2 3) 3 ))) 3 )
+       (not(ex2 (list 5 7 (list (list (list 1 2 3) 3 ))) 12))
+  )
+)
+
+(defun ex3(l)
+  
+  (cond 
+       ((null l) nil)
+       ((atom (car l)) (ex3 (cdr l)))
+       ((listp (car l)) (cons (cons (car l) (ex3 (car l) ))  (ex3 (cdr l))))     
+  )
+)
+; (ex3 (list 1 2 (list 3 (list 4 5) (list 6 7)) 8 (list 9 10)) )
+
+;               {[l1] , n=1
+;ex4([l1...ln])={[l1] union ex4([l2...ln]) , n>1
+;
+
+(defun ex4(l)
+  (cond
+   ((null (cdr l))  l)
+   (T (union (list (car l)) (ex4 (cdr l) )))
+  )
+)
+
+(defun testex4()
+ (and (equal (ex4 (list 1 2 3)) `(2 3 1))
+      (equal (ex4 (list 1 2 2 1 4 2 3 3 )) `(2 3 4 1))
+      (equal (ex4 (list )) nil)
+      (equal (ex4 (list 1 2 (list 2 4) 5)) `(2 5 (2 4) 1))
+ )
+)
+
+
+(defun testall()
+ (and (testex1) (testex2) (testex4))
+)
